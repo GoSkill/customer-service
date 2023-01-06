@@ -30,7 +30,7 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/test", handleConnection)
+	r.HandleFunc("/", handleConnection)
 
 	srv := &http.Server{
 		Addr:         *addr,
