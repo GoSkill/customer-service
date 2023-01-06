@@ -55,7 +55,6 @@ func GetSMScollection(fileSMS [][]string) [][]SMSData {
 	sms1 := make([]SMSData, 0)
 	sms1 = append(sms1, ValidSMS...)
 	sortedSMS = append(sortedSMS, sms0, sms1)
-	//	log.Print(sortedSMS) //печать в консоль коллекции SMS
 	return sortedSMS
 }
 
@@ -96,7 +95,6 @@ func GetMMScollection(fileMMS []MMSData) [][]MMSData {
 	mms1 := make([]MMSData, 0)
 	mms1 = append(mms1, ValidMMS...)
 	sortedMMS = append(sortedMMS, mms0, mms1)
-	//log.Print(sortedMMS) //печать в консоль коллекции MMS
 	return sortedMMS
 }
 
@@ -108,13 +106,13 @@ func GetVoiceCollection(fileVoice [][]string) []VoiceCallData {
 	)
 	alfaCode := CodeISOalpha2()
 	for _, voice := range fileVoice {
-		if len(voice) != 8 { //проверка наличия 8 полей
+		if len(voice) != 8 {
 			continue
 		}
-		if !ValidData(alfaCode, voice[0]) { //валидность кода страны
+		if !ValidData(alfaCode, voice[0]) {
 			continue
 		}
-		if !ValidData(ProviderVoice, voice[3]) { //валидность провайдера
+		if !ValidData(ProviderVoice, voice[3]) {
 			continue
 		}
 		voice4, err := strconv.ParseFloat(voice[4], 32)
@@ -141,7 +139,6 @@ func GetVoiceCollection(fileVoice [][]string) []VoiceCallData {
 		Voice.ConnectionStability = float32(voice4)
 		ValidVoice = append(ValidVoice, Voice)
 	}
-	//log.Print(ValidVoice) //печать в консоль обработанных Voice
 	return ValidVoice
 }
 
@@ -153,13 +150,13 @@ func GetEmailCollection(fileEmail [][]string) map[string][][]EmailData {
 	)
 	alfaCode := CodeISOalpha2()
 	for _, e := range fileEmail {
-		if len(e) != 3 { //проверка наличия 3х полей
+		if len(e) != 3 {
 			continue
 		}
-		if !ValidData(alfaCode, e[0]) { //валидность кода страны
+		if !ValidData(alfaCode, e[0]) {
 			continue
 		}
-		if ValidData(ProviderEmail, e[2]) { //валидность провайдера
+		if ValidData(ProviderEmail, e[2]) {
 			continue
 		}
 		emailEnd := strings.Trim(e[2], "\n")
@@ -172,7 +169,6 @@ func GetEmailCollection(fileEmail [][]string) map[string][][]EmailData {
 		email.DeliveryTime = email2
 		ValidEmail = append(ValidEmail, email)
 	}
-	//	log.Print(ValidEmail) //печать в консоль обработанных Email
 	return sortingEmailToMap(ValidEmail)
 }
 
@@ -207,7 +203,6 @@ func sortingEmailToMap(std []EmailData) map[string][][]EmailData {
 		MaxMinTime = append(MaxMinTime, maxTime, minTime)
 		MapEmail[country] = MaxMinTime
 	}
-	//	log.Print(MapEmail) //печать в консоль составленной карты
 	return MapEmail
 }
 
@@ -248,7 +243,6 @@ func GetBillingCollection(file string) BillingData {
 	Billing.Recurring = reverseBit[3]
 	Billing.FraudControl = reverseBit[4]
 	Billing.CheckoutPage = reverseBit[5]
-	//log.Print("%v\n", Billing) //печать в консоль полученной BillingData
 	return Billing
 }
 
@@ -270,7 +264,6 @@ func GetSupportCollection(fileSupport []SupportData) []int {
 	}
 	time := sum * 60 / 18
 	Support = append(Support, Level, time)
-	//log.Print(Support) //печать в консоль обработанных SupportData
 	return Support
 }
 
@@ -286,7 +279,7 @@ func GetIncidentsCollection(url string) []IncidentData {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		log.Printf("получение ошибки, код состояния: %d \nbody: %s\n", resp.StatusCode, resp.Body)
 		return Incidents
 	}
@@ -295,6 +288,5 @@ func GetIncidentsCollection(url string) []IncidentData {
 		return Incidents
 	}
 	sort.Stable(SortedIncidentByStatus(Incidents))
-	//log.Print(Incidents) //печать в консоль обработанных IncidentData
 	return Incidents
 }

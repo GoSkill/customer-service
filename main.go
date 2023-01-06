@@ -11,35 +11,22 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var resultT ResultT
+var (
+	addr      *string
+	mms       *string
+	support   *string
+	accendent *string
+)
 
-func handleConnection(w http.ResponseWriter, r *http.Request) {
-	rst := getResultData()
-	checkingStructure(rst)
-
-	response, _ := json.Marshal(resultT)
-	w.WriteHeader(http.StatusOK)
-	w.Write(response)
-}
-
-func checkingStructure(rst ResultSetT) ResultT {
-	//rst.SMS = nil //для проверки ошибки
-
-	if rst.SMS == nil || rst.MMS == nil || rst.VoiceCall == nil ||
-		rst.Email == nil || rst.Support == nil || rst.Incidents == nil {
-		resultT.Error = "Error on collect data"
-		fmt.Printf("ошибка сбора данных:\n %v\n %v\n", resultT.Status, resultT.Error)
-		return resultT
-	}
-	resultT.Status = true
-	resultT.Data = rst
-	resultT.Error = ""
-	return resultT
+func init() {
+	addr = flag.String("addr", ":8282", "Сетевой адрес HTTP")
+	mms = flag.String("mms", "http://127.0.0.1:8383/mms", "путь к данным MMS")
+	support = flag.String("support", "http://127.0.0.1:8383/support", "путь к данным Support")
+	accendent = flag.String("accendent", "http://127.0.0.1:8383/accendent", "путь к данным Incidents")
+	flag.Parse()
 }
 
 func main() {
-	addr := flag.String("addr", ":8282", "Сетевой адрес HTTP")
-	flag.Parse()
 
 	r := mux.NewRouter()
 
@@ -55,46 +42,65 @@ func main() {
 	srv.ListenAndServe()
 }
 
+var resultT ResultT
+
+func handleConnection(w http.ResponseWriter, r *http.Request) {
+	rst := getResultData()
+	checkingStructure(rst)
+
+	response, _ := json.Marshal(resultT)
+	w.WriteHeader(http.StatusOK)
+	w.Write(response)
+}
+
+func checkingStructure(rst ResultSetT) ResultT {
+	//rst.SMS = nil //для проверки ошибки записи в ResultT
+
+	if rst.SMS == nil || rst.MMS == nil || rst.VoiceCall == nil ||
+		rst.Email == nil || rst.Support == nil || rst.Incidents == nil {
+		resultT.Error = "Error on collect data"
+		fmt.Printf("ошибка сбора данных:\n %v\n %v\n", resultT.Status, resultT.Error)
+		return resultT
+	}
+	resultT.Status = true
+	resultT.Data = rst
+	resultT.Error = ""
+	return resultT
+}
+
 func getResultData() ResultSetT {
-	//коллекция SMS - [][]слайс слайсов SMS сообщений
+	//коллекция SMS - [][]слайс SMS сообщений
 	pathFileSMS := "simulator/sms.data"
 	fileSMS := openAndReadCSV(pathFileSMS)
 	SMS := GetSMScollection(fileSMS)
-	//fmt.Printf("SMS %v\n", SMS)
 
-	//коллекция MMS - [][]слайс слайсов SMS сообщений
-	pathURL := "http://127.0.0.1:8383/mms"
-	UrlMMS := parsingMMS(pathURL)
+	//коллекция MMS - [][]слайс MMS сообщений
+	pathURL := mms
+	UrlMMS := parsingMMS(*pathURL)
 	MMS := GetMMScollection(UrlMMS)
-	//fmt.Printf("MMS %v\n", MMS)
 
 	//коллекция VoiceCall - []слайс Voice сообщений
 	pathFileVoice := "simulator/voice.data"
 	fileVoice := openAndReadCSV(pathFileVoice)
 	VoiceCall := GetVoiceCollection(fileVoice)
-	//fmt.Printf("VoiceCall %v\n", VoiceCall)
 
-	//коллекция EmailData - map[string][][] карта слайс слайсов Email сообщений
+	//коллекция EmailData - map[string][][] карта Email сообщений
 	pathFileEmail := "simulator/email.data"
 	fileEmail := openAndReadCSV(pathFileEmail)
 	Email := GetEmailCollection(fileEmail)
-	//fmt.Printf("Email %v\n", Email)
 
 	//коллекция BillingData - структура BillingData
 	pathFileBilling := "simulator/billing.data"
 	Billing := GetBillingCollection(pathFileBilling)
-	//fmt.Printf("Billing %v\n", Billing)
 
 	//коллекция Support - []int слайс нагрузки и времени ответа
-	pathURLsupport := "http://127.0.0.1:8383/support"
-	UrlSupport := parsingSupport(pathURLsupport)
+	pathURLsupport := support
+	UrlSupport := parsingSupport(*pathURLsupport)
 	Support := GetSupportCollection(UrlSupport)
-	//fmt.Printf("Support %v\n", Support)
 
 	//коллекция Incident - []слайс Incident сообщений
-	pathURLincident := "http://127.0.0.1:8383/accendent"
-	Incidents := GetIncidentsCollection(pathURLincident)
-	//fmt.Printf("Incidents %v\n", Incidents)
+	pathURLincident := accendent
+	Incidents := GetIncidentsCollection(*pathURLincident)
 
 	rst := ResultSetT{
 		SMS:       SMS,

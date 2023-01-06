@@ -7,9 +7,6 @@ type SMSData struct {
 	Provider     string `json:"provider"`
 }
 
-var SMSi SMSData
-var CorrectSMS []SMSData
-
 type MMSData struct {
 	Country      string `json:"country"`
 	Provider     string `json:"provider"`
