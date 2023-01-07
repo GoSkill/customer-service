@@ -1,5 +1,5 @@
 (function(){
-    let apiPath = 'http://127.0.0.1:8282/test'; //'http://127.0.0.1:8383/test';
+    let apiPath = 'http://127.0.0.1:8282';
     //let apiPath = 'response/error.json';
 
     let dataScheme = {
@@ -10,7 +10,6 @@
         ],
         'sms' : ["country", "bandwidth", "response_time", "provider"],
         'mms' : ["country", "provider", "bandwidth", "response_time"],
-    //    'mms' : ["country", "bandwidth", "response_time", "provider"],
         'incident' : ["topic", "status"]
     };
 
