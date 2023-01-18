@@ -6,10 +6,10 @@
         'voice_call' : [
             "country", "bandwidth", "response_time", "provider",
             "connection_stability", "ttfb", "voice_purity",
-            "median_of_call_time"
+            "median_of_calls_time"
         ],
         'sms' : ["country", "bandwidth", "response_time", "provider"],
-        'mms' : ["country", "provider", "bandwidth", "response_time"],
+        'mms' : ["country", "bandwidth", "response_time", "provider"],
         'incident' : ["topic", "status"]
     };
 

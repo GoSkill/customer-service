@@ -31,7 +31,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", handleConnection)
-
+		
 	srv := &http.Server{
 		Addr:         *addr,
 		Handler:      r,
@@ -39,12 +39,12 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 	log.Printf("Сервер слушает на 127.0.0.1%s", srv.Addr)
-	srv.ListenAndServe()
+	srv.ListenAndServe()	
 }
 
 var resultT ResultT
 
-func handleConnection(w http.ResponseWriter, r *http.Request) {
+func handleConnection(w http.ResponseWriter, _ *http.Request) {
 	rst := getResultData()
 	checkingStructure(rst)
 
@@ -73,7 +73,7 @@ func getResultData() ResultSetT {
 	pathFileSMS := "simulator/sms.data"
 	fileSMS := openAndReadCSV(pathFileSMS)
 	SMS := GetSMScollection(fileSMS)
-
+	
 	//коллекция MMS - [][]слайс MMS сообщений
 	pathURL := mms
 	UrlMMS := parsingMMS(*pathURL)
