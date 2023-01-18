@@ -47,6 +47,8 @@ func parsingMMS(url string) []MMSData {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode != 200 {
 		log.Printf("получение ошибки, код состояния: %d \nbody: %s\n", resp.StatusCode, resp.Body)
 	}
@@ -63,6 +65,8 @@ func parsingSupport(url string) []SupportData {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode != 200 {
 		log.Printf("получение ошибки, код состояния: %d \nbody: %s\n", resp.StatusCode, resp.Body)
 		return data
@@ -100,6 +104,8 @@ func ParseISOalpha2() []ISOalpha2 {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer resp.Body.Close()
+
 	if err = json.NewDecoder(resp.Body).Decode(&ResponseAlpha); err != nil {
 		log.Fatal(err)
 	}

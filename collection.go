@@ -279,6 +279,8 @@ func GetIncidentsCollection(url string) []IncidentData {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer resp.Body.Close()
+	
 	if resp.StatusCode != http.StatusOK {
 		log.Printf("получение ошибки, код состояния: %d \nbody: %s\n", resp.StatusCode, resp.Body)
 		return Incidents
