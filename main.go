@@ -45,6 +45,8 @@ func main() {
 var resultT ResultT
 
 func handleConnection(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	rst := getResultData()
 	checkingStructure(rst)
 
